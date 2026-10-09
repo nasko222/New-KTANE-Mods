@@ -1,1 +1,16 @@
-Replace this with a JSON generated at ktane.timwi.de (see Tools -> Create new module)
+{
+  "Author": "nasko222",
+  "DefuserDifficulty": "Easy",
+  "Description": "Music makes you lose control! Tags: dancing, triangle, tongo, pumped up kicks, green, loud",
+  "ExpertDifficulty": "VeryHard",
+  "ModuleID": "dancingTriangle",
+  "Name": "Dancing Triangle",
+  "Origin": "Mods",
+  "Published": "2026-10-09",
+  "Quirks": "InstantDeath",
+  "SortKey": "DANCINGTRIANGLE",
+  "SourceUrl": "https://github.com/nasko222/New-KTANE-Mods",
+  "SteamID": "3816673128",
+  "Symbol": "Ton",
+  "Type": "Regular"
+}
