@@ -298,16 +298,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 114820467079020862, guid: 8fa7563497f43a743a68e9c7d6c30509,
-        type: 2}
-      propertyPath: ModuleDisplayName
-      value: Dancing Triangle
-      objectReference: {fileID: 0}
-    - target: {fileID: 114820467079020862, guid: 8fa7563497f43a743a68e9c7d6c30509,
-        type: 2}
-      propertyPath: ModuleType
-      value: dancingTriangle
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8fa7563497f43a743a68e9c7d6c30509, type: 2}
   m_IsPrefabParent: 0
