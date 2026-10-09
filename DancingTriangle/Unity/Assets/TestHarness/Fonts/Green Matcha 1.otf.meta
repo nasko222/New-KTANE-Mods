@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 7b440e45a681af14481143f3da11f98b
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 64
+  forceTextureCase: 3
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Green Matcha
+  fontNames:
+  - Green Matcha
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 17c830d9beff0da42887051374447b7f, type: 3}
+  customCharacters: 0123456789
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
