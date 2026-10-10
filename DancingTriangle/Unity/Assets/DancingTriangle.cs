@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.IO;
 using System.Text;
 using KModkit;
 using Newtonsoft.Json;
@@ -22,6 +23,36 @@ public class DancingTriangle : MonoBehaviour
     public AudioSource AudioSource;
     public AudioClip LoopAudio;
     public AudioClip EndAudio;
+	
+	private class DancingTriangleSettings
+	{
+		public int Volume = 100;
+	}
+
+	private int _volume = 100;
+
+#pragma warning disable 414
+	private static readonly Dictionary<string, object>[] TweaksEditorSettings =
+	{
+		new Dictionary<string, object>
+		{
+			{ "Filename", "dancingTriangle-settings.txt" },
+			{ "Name", "Dancing Triangle" },
+			{
+				"Listings",
+				new List<Dictionary<string, object>>
+				{
+					new Dictionary<string, object>
+					{
+						{ "Key", "Volume" },
+						{ "Text", "Volume" },
+						{ "Description", "Music volume from 0 to 100. Default: 100." }
+					}
+				}
+			}
+		}
+	};
+#pragma warning restore 414
 
     private int[] _buttonNumbers = new int[5];
     private int[] _outlineIndexes = new int[5];
@@ -56,10 +87,11 @@ public class DancingTriangle : MonoBehaviour
     };
 
     private void Awake()
-    {
-        _moduleId = _moduleIdCounter++;
+	{
+		_moduleId = _moduleIdCounter++;
 
-        RandomizeButtons();
+		LoadSettings();
+		RandomizeButtons();
 
         for (int i = 0; i < Buttons.Length; i++)
         {
@@ -1135,4 +1167,73 @@ public class DancingTriangle : MonoBehaviour
 
         Module.HandlePass();
     }
+	
+	private void LoadSettings()
+	{
+		_volume = 100;
+
+		try
+		{
+			string directory = Path.Combine(
+				Application.persistentDataPath,
+				"Modsettings"
+			);
+
+			string path = Path.Combine(
+				directory,
+				"dancingTriangle-settings.txt"
+			);
+
+			if (!Directory.Exists(directory))
+				Directory.CreateDirectory(directory);
+
+			if (!File.Exists(path))
+			{
+				DancingTriangleSettings defaults =
+					new DancingTriangleSettings();
+
+				File.WriteAllText(
+					path,
+					JsonConvert.SerializeObject(
+						defaults,
+						Formatting.Indented
+					)
+				);
+			}
+
+			DancingTriangleSettings settings =
+				JsonConvert.DeserializeObject<DancingTriangleSettings>(
+					File.ReadAllText(path)
+				);
+
+			if (settings != null)
+				_volume = Mathf.Clamp(settings.Volume, 0, 100);
+
+			Debug.LogFormat(
+				"[Dancing Triangle #{0}] Settings path: {1}",
+				_moduleId,
+				path
+			);
+		}
+		catch (Exception e)
+		{
+			Debug.LogFormat(
+				"[Dancing Triangle #{0}] Failed to read settings: {1}. Using Volume 100.",
+				_moduleId,
+				e.Message
+			);
+
+			_volume = 100;
+		}
+
+		if (AudioSource != null)
+			AudioSource.volume = _volume / 100f;
+
+		Debug.LogFormat(
+			"[Dancing Triangle #{0}] Volume: {1}%",
+			_moduleId,
+			_volume
+		);
+	}
+
 }

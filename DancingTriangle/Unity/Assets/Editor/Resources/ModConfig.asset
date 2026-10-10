@@ -14,8 +14,9 @@ MonoBehaviour:
   id: dancingTriangle
   title: Dancing Triangle
   author: nasko222
-  description: "ALDIODER KIDS QUDA PUMPARQQUI U BETERAN BETERAN ONTRO MY GUN\r\n\r\nALDIODER
-    KIDS QUIDAPAMRAPRQUI BETERAN BETERAN FASTER THAN MY BAALEEET"
+  description: "(This is a Module!)\n\nALDIODER KIDS QUDA PUMPARQQUI U BETERAN BETERAN
+    ONTRO MY GUN\r\n\r\nALDIODER KIDS QUIDAPAMRAPRQUI BETERAN BETERAN FASTER THAN
+    MY BAALEEET"
   version: v1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 82d51a60bd407d2479ce538d3492db60, type: 3}
