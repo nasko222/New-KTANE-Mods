@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -25,11 +26,151 @@ public class NaskoMood : MonoBehaviour
         {
             Button.AddInteractionPunch(0.5f);
 
-            if (!_solved && !_requestInProgress)
+            if (_solved || _requestInProgress)
+                return false;
+
+            string missionId;
+
+            if (IsMissionSetting(out missionId))
+            {
+                Debug.LogFormat(
+                    "[Nasko's Mood #{0}] Mission setting detected ({1}). Module solved automatically.",
+                    _moduleId,
+                    missionId
+                );
+
+                Solve();
+            }
+            else
+            {
                 StartCoroutine(CheckServer());
+            }
 
             return false;
         };
+    }
+
+    private bool IsMissionSetting(out string missionId)
+    {
+        missionId = null;
+
+        if (Application.isEditor)
+            return false;
+
+        try
+        {
+            Type gameplayStateType = FindType("GameplayState");
+
+            if (gameplayStateType == null)
+                return false;
+
+            FieldInfo missionField = gameplayStateType.GetField(
+                "MissionToLoad",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+            );
+
+            if (missionField == null)
+                return false;
+
+            object missionValue = missionField.GetValue(null);
+
+            if (missionValue == null)
+                return false;
+
+            missionId = missionValue.ToString();
+
+            if (string.IsNullOrEmpty(missionId))
+                return false;
+
+            string freeplayId = GetStaticString(
+                "FreeplayMissionGenerator",
+                "FREEPLAY_MISSION_ID"
+            );
+
+            string customId = GetStaticString(
+                "ModMission",
+                "CUSTOM_MISSION_ID"
+            );
+
+            if (!string.IsNullOrEmpty(freeplayId) && missionId == freeplayId)
+                return false;
+
+            if (!string.IsNullOrEmpty(customId) && missionId == customId)
+                return false;
+
+            if (missionId.Equals("freeplay", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+            if (missionId.Equals("custom", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogFormat(
+                "[Nasko's Mood #{0}] Could not determine mission setting: {1}",
+                _moduleId,
+                e.Message
+            );
+
+            return false;
+        }
+    }
+
+    private Type FindType(string typeName)
+    {
+        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        for (int i = 0; i < assemblies.Length; i++)
+        {
+            Type[] types;
+
+            try
+            {
+                types = assemblies[i].GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                types = e.Types;
+            }
+
+            if (types == null)
+                continue;
+
+            for (int j = 0; j < types.Length; j++)
+            {
+                Type type = types[j];
+
+                if (type == null)
+                    continue;
+
+                if (type.Name == typeName || type.FullName == typeName)
+                    return type;
+            }
+        }
+
+        return null;
+    }
+
+    private string GetStaticString(string typeName, string fieldName)
+    {
+        Type type = FindType(typeName);
+
+        if (type == null)
+            return null;
+
+        FieldInfo field = type.GetField(
+            fieldName,
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+        );
+
+        if (field == null)
+            return null;
+
+        object value = field.GetValue(null);
+
+        return value == null ? null : value.ToString();
     }
 
     private IEnumerator CheckServer()
